@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -23,7 +24,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 
-export default function Header({ onNavigate }) {
+export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openCategory, setOpenCategory] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -79,11 +80,7 @@ export default function Header({ onNavigate }) {
     setAnchorEl(null);
   };
 
-  const handleNavClick = (event, href) => {
-    if (onNavigate && href.startsWith('/')) {
-      event.preventDefault();
-      onNavigate(href);
-    }
+  const handleNavClose = () => {
     setIsMenuOpen(false);
     handleCategoryClose();
   };
@@ -142,9 +139,9 @@ export default function Header({ onNavigate }) {
           }}
         >
           <Button
-            href="/"
+            component={Link}
+            to="/"
             variant="text"
-            onClick={(e) => handleNavClick(e, '/')}
             sx={{
               display: 'flex',
               alignItems: 'center',
@@ -228,17 +225,21 @@ export default function Header({ onNavigate }) {
                         },
                       }}
                     >
-                      {group.items.map((item) => (
-                        <MenuItem
-                          key={item.href}
-                          component="a"
-                          href={item.href}
-                          onClick={(e) => handleNavClick(e, item.href)}
-                          sx={{ fontWeight: 600 }}
-                        >
-                          {item.label}
-                        </MenuItem>
-                      ))}
+                      {group.items.map((item) => {
+                        const isInternal = item.href.startsWith('/');
+                        return (
+                          <MenuItem
+                            key={item.href}
+                            component={isInternal ? Link : 'a'}
+                            to={isInternal ? item.href : undefined}
+                            href={!isInternal ? item.href : undefined}
+                            onClick={handleNavClose}
+                            sx={{ fontWeight: 600 }}
+                          >
+                            {item.label}
+                          </MenuItem>
+                        );
+                      })}
                     </Menu>
                   </Box>
                 ))}
@@ -289,17 +290,21 @@ export default function Header({ onNavigate }) {
               >
                 {group.category}
               </ListSubheader>
-              {group.items.map((item) => (
-                <ListItemButton
-                  key={item.href}
-                  component="a"
-                  href={item.href}
-                  onClick={(e) => handleNavClick(e, item.href)}
-                  sx={{ borderRadius: 1 }}
-                >
-                  <ListItemText primary={item.label} />
-                </ListItemButton>
-              ))}
+              {group.items.map((item) => {
+                const isInternal = item.href.startsWith('/');
+                return (
+                  <ListItemButton
+                    key={item.href}
+                    component={isInternal ? Link : 'a'}
+                    to={isInternal ? item.href : undefined}
+                    href={!isInternal ? item.href : undefined}
+                    onClick={handleNavClose}
+                    sx={{ borderRadius: 1 }}
+                  >
+                    <ListItemText primary={item.label} />
+                  </ListItemButton>
+                );
+              })}
               {idx < links.length - 1 && <Divider sx={{ marginY: 1.5 }} />}
             </Box>
           ))}

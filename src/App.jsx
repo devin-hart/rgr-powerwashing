@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 import Home from './pages/Home';
@@ -15,29 +16,8 @@ import Faq from './pages/Faq';
 import ContactPage from './pages/ContactPage';
 import './App.css';
 
-const routes = {
-  '/': Home,
-  '/graffiti-removal': GraffitiRemoval,
-  '/glass-restoration': GlassRestoration,
-  '/anti-graffiti': AntiGraffiti,
-  '/exterior-cleaning': ExteriorCleaning,
-  '/window-film-removal': WindowFilmRemoval,
-  '/window-cleaning': WindowCleaning,
-  '/about': AboutPage,
-  '/pricing': Pricing,
-  '/blog': Blog,
-  '/faq': Faq,
-  '/contact': ContactPage,
-};
-
-function App() {
-  const [path, setPath] = useState(window.location.pathname);
-
-  useEffect(() => {
-    const handlePop = () => setPath(window.location.pathname);
-    window.addEventListener('popstate', handlePop);
-    return () => window.removeEventListener('popstate', handlePop);
-  }, []);
+function ScrollReveal() {
+  const location = useLocation();
 
   useEffect(() => {
     const sections = Array.from(document.querySelectorAll('main section'));
@@ -59,23 +39,38 @@ function App() {
     });
 
     return () => observer.disconnect();
-  }, [path]);
+  }, [location.pathname]);
 
-  const navigate = (to) => {
-    if (window.location.pathname !== to) {
-      window.history.pushState({}, '', to);
-      setPath(to);
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  return null;
+}
 
-  const Page = routes[path] || Home;
+function App() {
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, [location.pathname]);
 
   return (
     <>
-      <Header onNavigate={navigate} />
+      <Header />
       <main>
-        <Page />
+        <ScrollReveal />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/graffiti-removal" element={<GraffitiRemoval />} />
+          <Route path="/glass-restoration" element={<GlassRestoration />} />
+          <Route path="/anti-graffiti" element={<AntiGraffiti />} />
+          <Route path="/exterior-cleaning" element={<ExteriorCleaning />} />
+          <Route path="/window-film-removal" element={<WindowFilmRemoval />} />
+          <Route path="/window-cleaning" element={<WindowCleaning />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/pricing" element={<Pricing />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/faq" element={<Faq />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="*" element={<Home />} />
+        </Routes>
       </main>
       <Footer />
     </>
