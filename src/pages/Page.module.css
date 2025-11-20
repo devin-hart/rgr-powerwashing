@@ -1,0 +1,15 @@
+.section {
+  padding: 72px 0;
+}
+
+.lead {
+  color: var(--color-text-light);
+  max-width: 760px;
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 56px 0;
+  }
+}
